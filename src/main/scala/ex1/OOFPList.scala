@@ -30,10 +30,6 @@ enum List[A]:
     case h :: t => op(h, t.foldRight(init)(op))
     case _ => init
 
-  def foldRightValue[B, C](init: B)(value: C)(fv: C => C)(op: (A, B, C) => B): B = this match
-    case h :: t => op(h, t.foldRightValue(init)(fv(value))(fv)(op), value)
-    case _      => init
-
   def append(list: List[A]): List[A] = foldRight(list)(_ :: _)
 
   def flatMap[B](f: A => List[B]): List[B] = foldRight(Nil())(f(_) append _)
@@ -52,7 +48,8 @@ enum List[A]:
 
   def length(): Int = foldLeft(0)((a, _) => a + 1)
 
-  def zipWithIndex: List[(A, Int)] = foldRightValue(Nil())(0)(_ + 1)((a, b, c) => (a, c) :: b)
+  def zipWithIndex: List[(A, Int)] =
+    foldRight(Nil[(A, Int)](), this.length() - 1)((a, b) => ((a, b._2) :: b._1, b._2 - 1))._1
 
   def partition(predicate: A => Boolean): (List[A], List[A]) =
     foldRight((Nil(), Nil()))((a, b) => if predicate(a) then (a :: b._1, b._2) else (b._1, a :: b._2))
