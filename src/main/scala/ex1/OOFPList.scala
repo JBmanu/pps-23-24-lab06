@@ -4,31 +4,33 @@ package ex1
 enum List[A]:
   case ::(h: A, t: List[A])
   case Nil()
+
   def ::(h: A): List[A] = List.::(h, this)
 
   def head: Option[A] = this match
-    case h :: t => Some(h)  // pattern for scala.Option
-    case _ => None          // pattern for scala.Option
+    case h :: t => Some(h) // pattern for scala.Option
+    case _      => None // pattern for scala.Option
 
   def tail: Option[List[A]] = this match
     case h :: t => Some(t)
-    case _ => None
+    case _      => None
+
   def foreach(consumer: A => Unit): Unit = this match
     case h :: t => consumer(h); t.foreach(consumer)
-    case _ =>
+    case _      =>
 
   def get(pos: Int): Option[A] = this match
     case h :: t if pos == 0 => Some(h)
-    case h :: t if pos > 0 => t.get(pos - 1)
-    case _ => None
+    case h :: t if pos > 0  => t.get(pos - 1)
+    case _                  => None
 
   def foldLeft[B](init: B)(op: (B, A) => B): B = this match
     case h :: t => t.foldLeft(op(init, h))(op)
-    case _ => init
+    case _      => init
 
   def foldRight[B](init: B)(op: (A, B) => B): B = this match
     case h :: t => op(h, t.foldRight(init)(op))
-    case _ => init
+    case _      => init
 
   def append(list: List[A]): List[A] = foldRight(list)(_ :: _)
 
@@ -40,7 +42,7 @@ enum List[A]:
   def map[B](fun: A => B): List[B] = flatMap(a => fun(a) :: Nil())
 
   def reduce(op: (A, A) => A): A = this match
-    case Nil() => throw new IllegalStateException()
+    case Nil()  => throw new IllegalStateException()
     case h :: t => t.foldLeft(h)(op)
 
   // Exercise: implement the following methods
@@ -60,9 +62,7 @@ enum List[A]:
     foldRight((Nil[A](), 0))((a, b) => if b._2 < n then (a :: b._1, b._2 + 1) else b)._1
 
   def collect(predicate: PartialFunction[A, A]): List[A] =
-    foldRight(Nil())((a, b) => if predicate.isDefinedAt(a)
-    then predicate.apply(a) :: b
-    else b)
+    foldRight(Nil())((a, b) => if predicate.isDefinedAt(a) then predicate.apply(a) :: b else b)
 
 // Factories
 object List:
@@ -78,6 +78,7 @@ object List:
 object Test extends App:
 
   import List.*
+
   val reference = List(1, 2, 3, 4)
   println(reference.zipWithValue(10)) // List((1, 10), (2, 10), (3, 10), (4, 10))
   println(reference.zipWithIndex) // List((1, 0), (2, 1), (3, 2), (4, 3))
