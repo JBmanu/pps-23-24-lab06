@@ -1,6 +1,6 @@
 package ex2
 
-import ex2.ConferenceReviewings.Question.FINAL
+import ex2.ConferenceReviewings.Question.{ FINAL, RELEVANCE }
 
 import scala.collection.mutable.ListBuffer as ListMutable
 
@@ -53,7 +53,11 @@ object ConferenceReviewings:
         val finalScores = orderedScores(article, Question.FINAL)
         finalScores.sum / finalScores.size.doubleValue
 
-      override def acceptedArticles(): Set[Int] = ???
+      override def acceptedArticles(): Set[Int] =
+        database.filter(el => averageFinalScore(el._1) >= 5)
+                .filter(el => orderedScores(el._1, RELEVANCE).exists(_ >= 8))
+                .map(el => el._1)
+                .toSet
 
       override def sortedAcceptedArticles(): List[(Int, Double)] = ???
 

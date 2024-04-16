@@ -49,10 +49,10 @@ class ConferenceReviewingTest:
     assertEquals(3.5, cr.averageFinalScore(3), 0.01)
     assertEquals(7.0, cr.averageFinalScore(4), 0.01)
     assertEquals(10.0, cr.averageFinalScore(5), 0.01)
-//
-//  @Test def testAcceptedArticles(): Unit =
-//    // solo gli articoli 1,2,4 vanno accettati, avendo media finale >=5 e almeno un voto su RELEVANCE >= 8
-//    assertEquals(Set(1, 2, 4), cr.acceptedArticles())
+
+  @Test def testAcceptedArticles(): Unit =
+    // solo gli articoli 1,2,4 vanno accettati, avendo media finale >=5 e almeno un voto su RELEVANCE >= 8
+    assertEquals(Set(1, 2, 4), cr.acceptedArticles())
 //
 //  @Test def testSortedAcceptedArticles(): Unit
 //    // articoli accettati, e loro voto finale medio
