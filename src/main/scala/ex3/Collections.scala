@@ -10,7 +10,7 @@ object PerformanceUtils:
     case Read
     case Update
     case Delete
-    
+
   case class MeasurementResults[T](result: T, duration: FiniteDuration) extends Ordered[MeasurementResults[_]]:
     override def compare(that: MeasurementResults[_]): Int = duration.toNanos.compareTo(that.duration.toNanos)
 
