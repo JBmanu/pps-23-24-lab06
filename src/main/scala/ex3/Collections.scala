@@ -33,7 +33,6 @@ object PerformanceUtils:
     Map(Exp.Create -> create, Exp.Read -> read, Exp.Update -> update, Exp.Delete -> delete)
 
 
-
 @main def checkPerformance: Unit =
 
   /* Linear sequences: List, ListBuffer */
