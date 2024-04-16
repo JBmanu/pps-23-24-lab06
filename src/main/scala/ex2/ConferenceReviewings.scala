@@ -47,7 +47,11 @@ object ConferenceReviewings:
           }
         }.flatten.sorted.toList
 
-      override def averageFinalScore(article: Int): Double = ???
+      override def averageFinalScore(article: Int): Double =
+        val databaseFilter = database.filter(_._1.equals(article))
+                                            .flatMap(_._2.toList)
+                                            .filter(_._1.equals(Question.FINAL))
+        databaseFilter.map(_._2).sum / databaseFilter.size.asInstanceOf[Double]
 
       override def acceptedArticles(): Set[Int] = ???
 
