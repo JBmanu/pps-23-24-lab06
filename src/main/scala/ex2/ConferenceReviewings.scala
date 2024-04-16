@@ -1,6 +1,8 @@
 package ex2
 
-import scala.collection.mutable.{ ListBuffer => ListMutable }
+import ex2.ConferenceReviewings.Question.FINAL
+
+import scala.collection.mutable.ListBuffer as ListMutable
 
 object ConferenceReviewings:
   enum Question:
@@ -48,10 +50,8 @@ object ConferenceReviewings:
         }.flatten.sorted.toList
 
       override def averageFinalScore(article: Int): Double =
-        val databaseFilter = database.filter(_._1.equals(article))
-                                            .flatMap(_._2.toList)
-                                            .filter(_._1.equals(Question.FINAL))
-        databaseFilter.map(_._2).sum / databaseFilter.size.asInstanceOf[Double]
+        val finalScores = orderedScores(article, Question.FINAL)
+        finalScores.sum / finalScores.size.doubleValue
 
       override def acceptedArticles(): Set[Int] = ???
 
