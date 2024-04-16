@@ -30,6 +30,7 @@ object PerformanceUtils:
     val read = measure(s"Read[$nameObj]")(readExp(create.result))
     val update = measure(s"Update[$nameObj]")(updateExp(create.result))
     val delete = measure(s"Delete[$nameObj]")(deleteExp(create.result))
+    println()
     Map(Exp.Create -> create, Exp.Read -> read, Exp.Update -> update, Exp.Delete -> delete)
 
 
