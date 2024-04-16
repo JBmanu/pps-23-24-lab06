@@ -1,7 +1,7 @@
 package ex3
 
 import java.util.concurrent.TimeUnit
-
+import scala.collection.Factory
 import scala.concurrent.duration.FiniteDuration
 
 object PerformanceUtils:
@@ -16,6 +16,23 @@ object PerformanceUtils:
     MeasurementResults(res, duration)
 
   def measure[T](expr: => T): MeasurementResults[T] = measure("")(expr)
+
+
+  enum Exp:
+    case Create
+    case Read
+    case Update
+    case Delete
+
+  def measures[C, T, U](nameObj: String)
+                       (createExp: => C)(readExp: => C => T)(updateExp: => C => U)(deleteExp: => C => U): Map[Exp, MeasurementResults[? >: C & T & U]] =
+    val create = measure(s"Create[$nameObj]")(createExp)
+    val read = measure(s"Read[$nameObj]")(readExp(create.result))
+    val update = measure(s"Update[$nameObj]")(updateExp(create.result))
+    val delete = measure(s"Delete[$nameObj]")(deleteExp(create.result))
+    Map(Exp.Create -> create, Exp.Read -> read, Exp.Update -> update, Exp.Delete -> delete)
+
+
 
 @main def checkPerformance: Unit =
 
