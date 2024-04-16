@@ -5,6 +5,12 @@ import scala.collection.Factory
 import scala.concurrent.duration.FiniteDuration
 
 object PerformanceUtils:
+  enum Exp:
+    case Create
+    case Read
+    case Update
+    case Delete
+    
   case class MeasurementResults[T](result: T, duration: FiniteDuration) extends Ordered[MeasurementResults[_]]:
     override def compare(that: MeasurementResults[_]): Int = duration.toNanos.compareTo(that.duration.toNanos)
 
@@ -16,13 +22,6 @@ object PerformanceUtils:
     MeasurementResults(res, duration)
 
   def measure[T](expr: => T): MeasurementResults[T] = measure("")(expr)
-
-
-  enum Exp:
-    case Create
-    case Read
-    case Update
-    case Delete
 
   def measures[C, T, U](nameObj: String)
                        (createExp: => C)(readExp: => C => T)(updateExp: => C => U)(deleteExp: => C => U): Map[Exp, MeasurementResults[? >: C & T & U]] =

@@ -1,17 +1,39 @@
 import org.junit.jupiter.api.Test
 import ex3.PerformanceUtils.*
 
-import scala.collection.mutable.ArrayBuffer
+import scala.collection.immutable
+import scala.collection.mutable
 
 class CollectionsTest:
-  // Create
-  // Read
-  // Update
-  // Delete
+  def toIterator[T <: Iterable[_]](constructor: () => T)(append: (T, Int) => Unit): T =
+    val iterable = constructor()
+    range.foreach(append(iterable, _))
+    iterable
+
+  def toSequenceImmutable[T <: immutable.Seq[_]](constructor: () => T)(range: Range.Inclusive): Unit =
+      toIterator(constructor)(_.appended(_))
+
+  def toSequenceMutable[T <: mutable.Seq[_]](constructor: () => T)(range: Range.Inclusive): Unit =
+    toIterator(constructor)(_.appended(_))
+
+
+  def toMapImmutable[T <: immutable.Map[String, Int]](constructor: () => T)(range: Range.Inclusive): Unit =
+    toIterator(constructor)((map, el) => map.updated(el.toString, el))
+
+  def toMapMutable[T <: mutable.Map[String, Int]](constructor: () => T)(range: Range.Inclusive): Unit =
+    toIterator(constructor)((map, el) => map(el.toString) = el)
+
+
+  def toSetImmutable[T <: immutable.Set[Int]](constructor: () => T)(range: Range.Inclusive): Unit =
+    toIterator(constructor)(_ incl _)
+
+  def toSetMutable[T <: mutable.Set[Int]](constructor: () => T)(range: Range.Inclusive): Unit =
+    toIterator(constructor)(_ add _)
+
 
   private val maxValue = 10000000
   private val minValue = 1
-  private val value = 6
+  private val value = 10000001
   val range = minValue to maxValue
 
   @Test def linerSequence(): Unit =
@@ -24,4 +46,7 @@ class CollectionsTest:
     val array = measures("Array Immutable")(range.toArray)(_.last)(_.appended(value))(_.dropWhile(_ < maxValue))
     val arrayBuffer = measures("Array Buffer")(range.toBuffer)(_.last)(_.appended(value))(_.remove(0, maxValue - 1))
 
+  @Test def set(): Unit = {}
+//    val vector = measures("Vector Immutable")(range.toSet)(_.last)(_.appended(value))(_.dropWhile(_ < maxValue))
+//    val arrayBuffer = measures("Array Buffer")(range.toBuffer)(_.last)(_.appended(value))(_.remove(0, maxValue - 1))
 
