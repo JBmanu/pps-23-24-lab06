@@ -54,8 +54,10 @@ object ConferenceReviewings:
         finalScores.sum / finalScores.size.doubleValue
 
       override def acceptedArticles(): Set[Int] =
-        database.filter(el => averageFinalScore(el._1) >= 5)
-                .filter(el => orderedScores(el._1, RELEVANCE).exists(_ >= 8))
+        val minimumAverageFinalScore: Double => Boolean = _ >= 5
+        val minimumRelevanceScore: List[Int] => Boolean = _.exists( _ >= 8)
+        database.filter(el => minimumAverageFinalScore(averageFinalScore(el._1)))
+                .filter(el => minimumRelevanceScore(orderedScores(el._1, RELEVANCE)))
                 .map(el => el._1)
                 .toSet
 
