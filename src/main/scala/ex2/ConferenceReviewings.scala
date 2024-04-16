@@ -35,12 +35,17 @@ object ConferenceReviewings:
         loadReview(article, Map(Question.RELEVANCE -> relevance, Question.SIGNIFICANCE -> significance, Question.CONFIDENCE -> confidence, Question.FINAL -> fin))
 
       override def orderedScores(article: Int, question: Question): List[Int] =
-        database.filter(_._1.equals(article))
-                .flatMap(_._2.toList)
-                .filter(_._1.equals(question))
-                .map(_._2)
-                .sorted
-                .toList
+//        database.filter(_._1.equals(article))
+//                .flatMap(_._2.toList)
+//                .filter(_._1.equals(question))
+//                .map(_._2)
+//                .sorted
+//                .toList
+        database.collect {
+          case (art, map) if art == article => map.collect {
+            case (que, answer) if que.equals(question) => answer
+          }
+        }.flatten.sorted.toList
 
       override def averageFinalScore(article: Int): Double = ???
 
