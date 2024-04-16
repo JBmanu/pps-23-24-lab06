@@ -1,6 +1,6 @@
 package ex2
 
-import ex2.ConferenceReviewings.Question.{ FINAL, RELEVANCE }
+import ex2.ConferenceReviewings.Question.{ CONFIDENCE, FINAL, RELEVANCE }
 
 import scala.collection.mutable.ListBuffer as ListMutable
 
@@ -66,4 +66,13 @@ object ConferenceReviewings:
                           .toList
                           .sortBy(_._2)
 
-      override def averageWeightedFinalScoreMap(): Map[Int, Double] = ???
+      private def averageWeightedFinalScore(article: Int): Double =
+        val averageWeightedFinalScores = database.filter(_._1.equals(article))
+                                                 .map(el => (el._2(FINAL) * el._2(CONFIDENCE)) / 10.0d)
+        averageWeightedFinalScores.sum / averageWeightedFinalScores.size
+
+      override def averageWeightedFinalScoreMap(): Map[Int, Double] =
+        database.map(_._1)
+                .distinct
+                .map(article => (article, averageWeightedFinalScore(article)))
+                .toMap
