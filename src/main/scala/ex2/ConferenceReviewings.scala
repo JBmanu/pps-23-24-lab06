@@ -37,12 +37,12 @@ object ConferenceReviewings:
         loadReview(article, Map(Question.RELEVANCE -> relevance, Question.SIGNIFICANCE -> significance, Question.CONFIDENCE -> confidence, Question.FINAL -> fin))
 
       override def orderedScores(article: Int, question: Question): List[Int] =
-//        database.filter(_._1.equals(article))
-//                .flatMap(_._2.toList)
-//                .filter(_._1.equals(question))
-//                .map(_._2)
-//                .sorted
-//                .toList
+        //        database.filter(_._1.equals(article))
+        //                .flatMap(_._2.toList)
+        //                .filter(_._1.equals(question))
+        //                .map(_._2)
+        //                .sorted
+        //                .toList
         database.collect {
           case (art, map) if art == article => map.collect {
             case (que, answer) if que.equals(question) => answer
@@ -55,12 +55,15 @@ object ConferenceReviewings:
 
       override def acceptedArticles(): Set[Int] =
         val minimumAverageFinalScore: Double => Boolean = _ >= 5
-        val minimumRelevanceScore: List[Int] => Boolean = _.exists( _ >= 8)
+        val minimumRelevanceScore: List[Int] => Boolean = _.exists(_ >= 8)
         database.filter(el => minimumAverageFinalScore(averageFinalScore(el._1)))
                 .filter(el => minimumRelevanceScore(orderedScores(el._1, RELEVANCE)))
                 .map(el => el._1)
                 .toSet
 
-      override def sortedAcceptedArticles(): List[(Int, Double)] = ???
+      override def sortedAcceptedArticles(): List[(Int, Double)] =
+        acceptedArticles().map(article => (article, averageFinalScore(article)))
+                          .toList
+                          .sortBy(_._2)
 
       override def averageWeightedFinalScoreMap(): Map[Int, Double] = ???

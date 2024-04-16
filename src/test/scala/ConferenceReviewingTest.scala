@@ -53,11 +53,11 @@ class ConferenceReviewingTest:
   @Test def testAcceptedArticles(): Unit =
     // solo gli articoli 1,2,4 vanno accettati, avendo media finale >=5 e almeno un voto su RELEVANCE >= 8
     assertEquals(Set(1, 2, 4), cr.acceptedArticles())
-//
-//  @Test def testSortedAcceptedArticles(): Unit
-//    // articoli accettati, e loro voto finale medio
-//    assertEquals(List((4, 7.0), (2, 7.5), (1, 8.5)), cr.sortedAcceptedArticles())
-//
+
+  @Test def testSortedAcceptedArticles(): Unit =
+    // articoli accettati, e loro voto finale medio
+    assertEquals(List((4, 7.0), (2, 7.5), (1, 8.5)), cr.sortedAcceptedArticles())
+
 //  @Test def optionalTestAverageWeightedFinalScore(): Unit
 //    // l'articolo 1 ha media pesata finale pari a (4.8+5.4)/2 = 5,1, con scarto massimo 0.01
 //    assertEquals(Some((4.8 + 5.4) / 2, 0.01), cr.averageWeightedFinalScoreMap().get(1))
