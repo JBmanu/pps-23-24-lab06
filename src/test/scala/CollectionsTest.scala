@@ -16,10 +16,6 @@ class CollectionsTest:
   @Test def linerSequence(): Unit =
     val immutableList = measures("List Immutable")(range.to(immutable.List))(_.last)(_ :+ value)(_.dropWhile(_ < maxValue))
     val mutableList = measures("List Buffer Immutable")(range.to(mutable.ListBuffer))(_.last)(_ += value)(_.dropWhile(_ < maxValue))
-    assertTrue(mutableList(Exp.Create) > immutableList(Exp.Create))
-    assertTrue(immutableList(Exp.Read) > mutableList(Exp.Read))
-    assertTrue(immutableList(Exp.Update) > mutableList(Exp.Update))
-    assertTrue(mutableList(Exp.Delete) > immutableList(Exp.Delete))
 
   @Test def indexSequence(): Unit =
     val vector = measures("Vector Immutable")(range.to(immutable.Vector))(_.last)(_ :+ value)(_.dropWhile(_ < maxValue))

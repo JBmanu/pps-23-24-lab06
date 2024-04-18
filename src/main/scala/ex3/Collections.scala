@@ -17,17 +17,19 @@ object PerformanceUtils:
     val startTime = System.nanoTime()
     val res = expr
     val duration = FiniteDuration(System.nanoTime() - startTime, TimeUnit.NANOSECONDS)
-    if (msg.nonEmpty) println(msg + " -- " + duration.toNanos + " nanos; " + duration.toMillis + "ms")
+    val format: Long => String = time => "%,d".format(time)
+    if (msg.nonEmpty) println(msg + " -- " + format(duration.toNanos) + " nanos = " + format(duration.toMillis) + " ms")
     MeasurementResults(res, duration)
 
   def measure[T](expr: => T): MeasurementResults[T] = measure("")(expr)
 
   def measures[C, T, U](nameObj: String)
                        (createExp: => C)(readExp: => C => T)(updateExp: => C => U)(deleteExp: => C => U): Map[Exp, MeasurementResults[? >: C & T & U]] =
-    val create = measure(s"Create[$nameObj]")(createExp)
-    val read = measure(s"Read[$nameObj]")(readExp(create.result))
-    val update = measure(s"Update[$nameObj]")(updateExp(create.result))
-    val delete = measure(s"Delete[$nameObj]")(deleteExp(create.result))
+    println(s"$nameObj")
+    val create = measure("[Create]")(createExp)
+    val read = measure("[Read]  ")(readExp(create.result))
+    val update = measure("[Update]")(updateExp(create.result))
+    val delete = measure("[Delete]")(deleteExp(create.result))
     println()
     Map(Exp.Create -> create, Exp.Read -> read, Exp.Update -> update, Exp.Delete -> delete)
 
