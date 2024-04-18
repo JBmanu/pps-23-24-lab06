@@ -1,5 +1,7 @@
 import org.junit.jupiter.api.Test
 import ex3.PerformanceUtils.*
+import ex3.PerformanceUtils.Exp
+import org.junit.jupiter.api.Assertions.assertTrue
 
 import scala.collection.immutable
 import scala.collection.mutable
@@ -12,9 +14,12 @@ class CollectionsTest:
   val range = minValue to maxValue
 
   @Test def linerSequence(): Unit =
-    val listImmutable = measures("List Immutable")(range.to(immutable.List))(_.last)(_ :+ value)(_.dropWhile(_ < maxValue))
-    val listMutable = measures("List Buffer Immutable")(range.to(mutable.ListBuffer))(_.last)(_ += value)(_.dropWhile(_ < maxValue))
-    listImmutable.foreach(map => assert(map._2 > listMutable(map._1)))
+    val immutableList = measures("List Immutable")(range.to(immutable.List))(_.last)(_ :+ value)(_.dropWhile(_ < maxValue))
+    val mutableList = measures("List Buffer Immutable")(range.to(mutable.ListBuffer))(_.last)(_ += value)(_.dropWhile(_ < maxValue))
+    assertTrue(mutableList(Exp.Create) > immutableList(Exp.Create))
+    assertTrue(immutableList(Exp.Read) > mutableList(Exp.Read))
+    assertTrue(immutableList(Exp.Update) > mutableList(Exp.Update))
+    assertTrue(mutableList(Exp.Delete) > immutableList(Exp.Delete))
 
   @Test def indexSequence(): Unit =
     val vector = measures("Vector Immutable")(range.to(immutable.Vector))(_.last)(_ :+ value)(_.dropWhile(_ < maxValue))
@@ -27,7 +32,7 @@ class CollectionsTest:
 
   @Test def map(): Unit =
     val immutableMap = measures("Vector Immutable")(range.map(i => i -> i).to(immutable.HashMap))(_.last)(_.updated(value, value))(_.dropWhile((k, _) => k < maxValue))
-    val mutableMap = measures("Array Buffer")(range.map(i => i -> i).to(mutable.HashMap))(_.last)(_ += (value -> value))(_.dropWhile((k, v) => k < maxValue))
+    val mutableMap = measures("Array Buffer")(range.map(i => i -> i).to(mutable.HashMap))(_.last)(_ += (value -> value))(_.dropWhile((k, _) => k < maxValue))
 
 
 

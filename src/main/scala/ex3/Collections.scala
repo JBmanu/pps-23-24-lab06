@@ -1,8 +1,6 @@
 package ex3
 
 import java.util.concurrent.TimeUnit
-import scala.collection.Factory
-import scala.collection.View.Collect
 import scala.concurrent.duration.FiniteDuration
 
 object PerformanceUtils:
