@@ -19,7 +19,7 @@ class OOFPListTest:
     assertEquals((List(2, 4), List(1, 3)), list.partition(_ % 2 == 0))
 
   @Test def span(): Unit =
-    assertEquals((List(1, 3), List(2, 4)), list.span(_ % 2 != 0))
+    assertEquals((List(1), List(2, 3, 4)), list.span(_ % 2 != 0))
     assertEquals((List(1, 2), List(3, 4)), list.span(_ < 3))
 
   @Test def takeRight(): Unit =

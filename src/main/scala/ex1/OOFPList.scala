@@ -15,6 +15,10 @@ enum List[A]:
     case h :: t => Some(t)
     case _      => None
 
+  def isEmpty: Boolean = this match
+    case Nil() => false
+    case _ => true
+
   def foreach(consumer: A => Unit): Unit = this match
     case h :: t => consumer(h); t.foreach(consumer)
     case _      =>
@@ -31,6 +35,8 @@ enum List[A]:
   def foldRight[B](init: B)(op: (A, B) => B): B = this match
     case h :: t => op(h, t.foldRight(init)(op))
     case _      => init
+
+  def reverse(): List[A] = foldLeft(Nil())((a, b) => b :: a)
 
   def append(list: List[A]): List[A] = foldRight(list)(_ :: _)
 
@@ -56,7 +62,9 @@ enum List[A]:
   def partition(predicate: A => Boolean): (List[A], List[A]) =
     foldRight((Nil(), Nil()))((a, b) => if predicate(a) then (a :: b._1, b._2) else (b._1, a :: b._2))
 
-  def span(predicate: A => Boolean): (List[A], List[A]) = partition(predicate)
+  def span(predicate: A => Boolean): (List[A], List[A]) =
+    val spanReverse = foldLeft((Nil[A](), Nil[A]()))((a, b) => if predicate(b) && !a._2.isEmpty then (b :: a._1, a._2) else (a._1, b :: a._2))
+    (spanReverse._1.reverse(), spanReverse._2.reverse())
 
   def takeRight(n: Int): List[A] =
     foldRight((Nil[A](), 0))((a, b) => if b._2 < n then (a :: b._1, b._2 + 1) else b)._1
@@ -83,7 +91,7 @@ object Test extends App:
   println(reference.zipWithValue(10)) // List((1, 10), (2, 10), (3, 10), (4, 10))
   println(reference.zipWithIndex) // List((1, 0), (2, 1), (3, 2), (4, 3))
   println(reference.partition(_ % 2 == 0)) // (List(2, 4), List(1, 3))
-  println(reference.span(_ % 2 != 0)) // (List(1, 3), List(2, 4))
+  println(reference.span(_ % 2 != 0)) // (List(1), List(2, 3, 4))
   println(reference.span(_ < 3)) // (List(1, 2), List(3, 4))
   println(reference.reduce(_ + _)) // 10
   println(List(10).reduce(_ + _)) // 10
