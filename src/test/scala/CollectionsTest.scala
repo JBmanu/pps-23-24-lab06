@@ -1,10 +1,7 @@
-import org.junit.jupiter.api.Test
 import ex3.PerformanceUtils.*
-import ex3.PerformanceUtils.Exp
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
-import scala.collection.immutable
-import scala.collection.mutable
+import scala.collection.{ immutable, mutable }
 import scala.reflect.ClassTag
 
 class CollectionsTest:

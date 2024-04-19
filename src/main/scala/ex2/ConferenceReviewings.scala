@@ -38,28 +38,21 @@ object ConferenceReviewings:
 
       override def orderedScores(article: Int, question: Question): List[Int] =
         //        database.filter(_._1.equals(article))
-        //                .flatMap(_._2.toList)
-        //                .filter(_._1.equals(question))
-        //                .map(_._2)
+        //                .map(_._2(question))
         //                .sorted
         //                .toList
-        database.collect {
-          case (art, map) if art == article => map.collect {
-            case (que, answer) if que.equals(question) => answer
-          }
-        }.flatten.sorted.toList
+        database.collect { case (art, map) if art == article => map(question) }
+                .sorted
+                .toList
 
       override def averageFinalScore(article: Int): Double =
         val finalScores = orderedScores(article, Question.FINAL)
         finalScores.sum / finalScores.size.doubleValue
 
-      override def acceptedArticles(): Set[Int] =
-        val minimumAverageFinalScore: Double => Boolean = _ >= 5
-        val minimumRelevanceScore: List[Int] => Boolean = _.exists(_ >= 8)
-        database.filter(el => minimumAverageFinalScore(averageFinalScore(el._1)))
-                .filter(el => minimumRelevanceScore(orderedScores(el._1, RELEVANCE)))
-                .map(el => el._1)
-                .toSet
+      private def acceptArticle(i: Int): Boolean =
+        averageFinalScore(i) >= 5 && orderedScores(i, RELEVANCE).exists(_ >= 8)
+
+      override def acceptedArticles(): Set[Int] = database.map(_._1).toSet.filter(acceptArticle)
 
       override def sortedAcceptedArticles(): List[(Int, Double)] =
         acceptedArticles().map(article => (article, averageFinalScore(article)))
